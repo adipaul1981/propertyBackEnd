@@ -1,0 +1,83 @@
+@import com.bms.property.Property
+@(property: Property)
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-4">
+                    <img alt="Bootstrap Image Preview" src="http://lorempixel.com/140/140/" />
+                </div>
+                <div class="col-md-4">
+
+                    <address>
+                        <strong><span id="container-numUnits"></span></strong><br /> <span> @property.address.streetNum @property.address.street</span><br />@property.address.city, @property.address.province @property.address.country<br /> <abbr title="Price">$</abbr> @property.price
+                    </address>
+                </div>
+                <div class="col-md-4">
+                    <div class="page-header">
+                        <h1>
+                            Prospect
+                        </h1>
+                    </div>
+                </div>
+            </div>
+            <br/><br/>
+            <br/><br/>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                Features
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            Number of Units:
+                        </div>
+                        <div class="panel-body">
+                            Type of Units:
+                        </div>
+                        <div class="panel-body">
+                            Municipal Evaluation: @property.muneval
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                Revenue
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            Number of Units:
+                        </div>
+                        <div class="panel-body">
+                            Type of Units:
+                        </div>
+                        <div class="panel-body">
+                            Municipal Evaluation:
+                        </div>
+                    </div>
+                </div>
+                @expensesTab(property)
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function(){
+
+        var $container = $('#container-numUnits');
+
+        $container.text(function(){
+            return (@property.no1half+@property.no2half+@property.no3half+@property.no4half+@property.no5half+@property.no6half+" Plex");
+        });
+    });
+</script>

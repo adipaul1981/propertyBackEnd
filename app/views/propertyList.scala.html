@@ -1,0 +1,105 @@
+@import com.bms.property.Property
+@(propertyList: List[Property])
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>
+                        # MLS
+                    </th>
+                    <th>
+                        Type
+                    </th>
+                    <th>
+                        Price
+                    </th>
+                    <th>
+                        Address
+                    </th>
+                    <th>
+                        City
+                    </th>
+                    <th>
+
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                    @for(property <- propertyList){
+                    <tr class="active">
+                        <td>
+                            @Html(com.bms.property.Property.generateLink(property))
+                        </td>
+                        <td>
+                            4-plex
+                        </td>
+                        <td>
+                            property.price
+                        </td>
+                        <td>
+                            property.streetNum property.street
+                        </td>
+                        <td>
+                            property.city
+                        </td>
+                        <td>
+                            <a href="#" class="Delete" data-info=@property.id >
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </a>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+            <ul class="pagination">
+                <li>
+                    <a href="#">Prev</a>
+                </li>
+                <li>
+                    <a href="#">1</a>
+                </li>
+                <li>
+                    <a href="#">2</a>
+                </li>
+                <li>
+                    <a href="#">3</a>
+                </li>
+                <li>
+                    <a href="#">4</a>
+                </li>
+                <li>
+                    <a href="#">5</a>
+                </li>
+                <li>
+                    <a href="#">Next</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<script>
+
+
+         $('.Delete').click(function(){
+            var tr = $(this).closest('tr');
+            $.ajax({
+                type: "DELETE",
+                url: '@controllers.routes.ProspectPropertyController.deleteProperty()' + '?' + $.param({"Id": $(this).attr('data-info')}),
+
+                success:function(result){
+                    console.log("test");
+                    tr.fadeOut(500, function(){
+                        $(this).remove();
+                    });
+                },
+                failure: function(errMsg){
+                    alert(errMsg);
+                }
+            });
+        });
+
+</script>
