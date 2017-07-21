@@ -1,0 +1,138 @@
+
+
+<div class="container-fluid">
+  <div class="row">
+
+    <div class="col-md-4">
+    </div>
+
+    <div class="col-md-4">
+       <form>
+           <div class="form-group">
+               <label>MLS Number</label>
+               <input class="form-control" id="MLSNumber" type="text">
+           </div>
+          <div class="form-group">
+               <label>Price</label>
+                <input class="form-control" id="Price" type="number">
+          </div>
+           <div class="form-group">
+               <label>Municipal Evaluation</label>
+               <input class="form-control" id="MunicipalEvaluation" type="number">
+           </div>
+           <div class="form-group">
+               <label>No. 1 1/2</label>
+               <input class="form-control" id="NoOneAndHalf" value="0" type="number">
+           </div>
+           <div class="form-group">
+               <label>No. 2 1/2</label>
+               <input class="form-control" id="NoTwoAndHalf" value="0" type="number">
+           </div>
+           <div class="form-group">
+               <label>No. 3 1/2</label>
+               <input class="form-control" id="NoThreeAndHalf" value="0" type="number">
+           </div>
+           <div class="form-group">
+               <label>No. 4 1/2</label>
+               <input class="form-control" id="NoFourAndHalf" value="4" type="number">
+           </div>
+           <div class="form-group">
+               <label>No. 5 1/2</label>
+               <input class="form-control" id="NoFiveAndHalf" value="0" type="number">
+           </div>
+           <div class="form-group">
+               <label>No. 6 1/2</label>
+               <input class="form-control" id="NoSixAndHalf" value="0" type="number">
+           </div>
+          <div class="form-group">
+                <label>Number</label>
+                <input class="form-control" id="PropertyNumber" type="number">
+          </div>
+          <div class="form-group">
+                <label>Street</label>
+                <input class="form-control" id="Street" type="text">
+          </div>
+          <div class="form-group">
+                <label>City</label>
+                <input class="form-control" id="City" type="text">
+          </div>
+          <div class="form-group">
+                <label>Province</label>
+                <input class="form-control" id="Province" value="Quebec" type="text">
+          </div>
+          <div class="form-group">
+                <labeL>Country</label>
+                <input class="form-control" id="Country" value="Canada" type="text">
+          </div>
+
+
+       </form>
+
+       <button type="button" id="Create" class="btn btn-default">
+           Create
+       </button>
+    </div>
+
+   <div class="col-md-4">
+   </div>
+
+  </div>
+</div>
+
+<script>
+
+     (function() {
+        document.getElementById("Create").onclick = function() {
+            console.log("data");
+            var jsonAddress = {
+                        "PropertyNumber" : parseFloat($("#PropertyNumber").val()),
+                        "Street" : $("#Street").val(),
+                        "City" : $("#City").val(),
+                        "Province" : $("#Province").val(),
+                        "Country" : $("#Country").val()
+            };
+
+
+            var json = {
+                        "MLSNumber" : $("#MLSNumber").val(),
+                        "Price" : parseFloat(($("#Price").val())),
+                        "MunicipalEvaluation" : parseFloat($("#MunicipalEvaluation").val()),
+                        "NoOneAndHalf" : parseInt($("#NoOneAndHalf").val()),
+                        "NoTwoAndHalf" : parseInt($("#NoTwoAndHalf").val()),
+                        "NoThreeAndHalf" : parseInt($("#NoThreeAndHalf").val()),
+                        "NoFourAndHalf" : parseInt($("#NoFourAndHalf").val()),
+                        "NoFiveAndHalf" : parseInt($("#NoFiveAndHalf").val()),
+                        "NoSixAndHalf" : parseInt($("#NoSixAndHalf").val()),
+                        "Address" : jsonAddress ,
+
+            };
+            console.log(json)
+            $.ajax({
+                type: 'POST',
+                data: JSON.stringify(json),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'JSON',
+                url: '@controllers.routes.ProspectPropertyController.create()',
+
+
+                complete: function(data){
+
+                    new PNotify({
+                        title: 'Regular Notice',
+                        text: 'Check me out! I\'m a notice.'
+                    });
+
+                    var property = JSON.parse(data.responseText);
+                     window.location.href = '/Property/' + property.MLSNumber;
+
+
+                },
+                failure: function(errMsg){
+                    alert(errMsg);
+                }
+            });
+
+        };
+     })();
+
+</script>

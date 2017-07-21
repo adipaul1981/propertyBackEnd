@@ -1,0 +1,63 @@
+@(title: String)(content: Html)
+
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <title>@title</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")"></link>
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")"></link>
+
+
+        <link media="all" type="text/css" rel="stylesheet" title="theme" href="/assets/bootswatch-3.3.7/Darkly/bootstrap.css" ></link>
+        <link media="all" type="text/css" rel="stylesheet" title="glyphicons" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" ></link>
+        <link media="all" type="text/css" rel="stylesheet" title="glyphicons" href="/assets/select2-4.0.3/css/select2.min.css" ></link>
+        <link media="all" type="text/css" rel="stylesheet" title="glyphicons" href="/assets/PNotify/pnotify.custom.css" ></link>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+        <script type="text/javascript" src="@routes.Assets.versioned("jquery-3.1.1/jquery-3.1.1.min.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.versioned("bootstrap-3.3.7-dist/js/bootstrap.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.versioned("handlebar/handlebars-v4.0.5.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.versioned("jquery-validation-1.15.1/jquery.validate.min.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.versioned("select2-4.0.3/js/select2.min.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.versioned("PNotify/pnotify.custom.min.js")"></script>
+    </head>
+
+
+
+    <body>
+
+
+
+        @navBar()
+        @content
+        <script>
+            var theme = "Darkly";
+            var theme_path = "";
+            var link = $('[href]:contains("bootswatch")')
+
+            $(document).ready(function() {
+                $('.dropdown-menu a').hover(function() {
+                    $(this).css('cursor','pointer');
+                });
+
+                $('.change-style-menu-item').on('click',(function() {
+                    theme = $(this).text();
+                    console.log(theme)
+                    var old_theme_path=$("[title='theme']").attr('href');
+                    var new_theme_path="/assets/bootswatch-3.3.7/"+theme+"/bootstrap.css"
+                    $("[title='theme']").attr('href', new_theme_path)
+                }));
+            });
+
+
+
+
+
+
+
+        </script>
+    </body>
+</html>
