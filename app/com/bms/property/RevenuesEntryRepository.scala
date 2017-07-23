@@ -10,28 +10,22 @@ import scala.concurrent.{ExecutionContext, Future, blocking}
 
 object RevenuesEntryRepository {
 
-  val FIELD_ID="expenses_id"
-  val FIELD_PROPERTY_EXPENSES_ID="property_exp_id"
-  val FIELD_RESIDENTIAL="residential"
-  val FIELD_COMMERCIAL="commercial"
-  val FIELD_PARKING_GARAGE="parking_garage"
-  val FIELD_OTHERS="others"
-  val FIELD_VR_RESIDENTIAL="vacancy_rate_residential"
-  val FIELD_VR_COMMERCIAL="vacancy_rate_commercial"
-  val FIELD_VR_PARKING="vacancy_rate_parking"
-  val FIELD_VR_OTHERS="vacancy_rate_others"
+  val FIELD_ID="id"
+  val FIELD_PROPERTY_ID="propId"
+  val FIELD_REVENUE_TYPE="expenseType"
+  val FIELD_VALUE="value"
+  val FIELD_VACANCY_RATE="vacancyRate"
 
   val ALL_FIELDS:String =
-    s"$FIELD_PROPERTY_EXPENSES_ID,$FIELD_RESIDENTIAL, $FIELD_COMMERCIAL, $FIELD_PARKING_GARAGE, $FIELD_OTHERS, $FIELD_VR_RESIDENTIAL," +
-      s"$FIELD_VR_COMMERCIAL, $FIELD_VR_PARKING, $FIELD_VR_OTHERS"
+    s"$FIELD_PROPERTY_ID,$FIELD_REVENUE_TYPE, $FIELD_VALUE, $FIELD_VACANCY_RATE"
 
   val TABLE_NAME:String = "bms.revenues"
 }
 
-trait RevenuesEntryRepository{
-  def save(revenues: Revenues): Future[Unit]
-
-  def getRevenueByPropertyExpenseID (id:Int): Option[Revenues]
-
-}
+//trait RevenuesEntryRepository{
+//  def save(revenues: Revenues): Future[Unit]
+//
+//  def getRevenueByPropertyExpenseID (id:Int): Option[Revenues]
+//
+//}
 

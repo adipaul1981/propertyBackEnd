@@ -1,87 +1,87 @@
-package com.bms.property
-
-import javax.inject.Inject
-
-import anorm.SqlParser.{double, int, str}
-import anorm.{NamedParameter, RowParser, SQL}
-import play.api.db.Database
-import play.db.NamedDatabase
-
-import scala.concurrent.{ExecutionContext, Future, blocking}
-
-class RevenuesEntryRepositoryImpl @Inject() (
-                                              @NamedDatabase("default") db: Database
-                                            )(implicit ec: ExecutionContext) extends RevenuesEntryRepository {
-
-  override def save(revenues: Revenues): Future[Unit] = Future(blocking {
-    db.withConnection { implicit c =>
-      val sql =
-        s"""INSERT INTO ${RevenuesEntryRepository.TABLE_NAME} (${RevenuesEntryRepository.ALL_FIELDS}) VALUES ({property_exp_id},{residential}
-           ,{commercial},{parking_garage},{others},{vacancy_rate_residential},{vacancy_rate_commercial},{vacancy_rate_parking},{vacancy_rate_others})""".stripMargin
-      println("TOTO")
-      SQL(sql)
-        .on(RevenuesEntryRepositoryImpl.generateOn(revenues): _*)
-        .executeInsert()
-    }
-  })
-
-  override def getRevenueByPropertyExpenseID(id: Int): Option[Revenues] =  {
-    db.withConnection { implicit c =>
-      val sql =
-        s"""|SELECT * FROM ${RevenuesEntryRepository.TABLE_NAME}
-            |           WHERE ${RevenuesEntryRepository.FIELD_PROPERTY_EXPENSES_ID} = {${RevenuesEntryRepository.FIELD_PROPERTY_EXPENSES_ID}}
-           """.stripMargin
-      SQL(sql)
-        .on(s"${RevenuesEntryRepository.FIELD_PROPERTY_EXPENSES_ID}" -> id)
-        .as(RevenuesEntryRepositoryImpl.expensesParser.*)
-        .headOption
-    }
-  }
-}
-
-
-object RevenuesEntryRepositoryImpl {
-
-  def generateOn(f: Revenues): Seq[NamedParameter] =
-    Seq(
-      NamedParameter(RevenuesEntryRepository.FIELD_PROPERTY_EXPENSES_ID, f.property_expenses_id),
-      NamedParameter(RevenuesEntryRepository.FIELD_RESIDENTIAL, f.residential),
-      NamedParameter(RevenuesEntryRepository.FIELD_COMMERCIAL, f.commercial),
-      NamedParameter(RevenuesEntryRepository.FIELD_PARKING_GARAGE, f.parking_garages),
-      NamedParameter(RevenuesEntryRepository.FIELD_OTHERS, f.others),
-      NamedParameter(RevenuesEntryRepository.FIELD_VR_RESIDENTIAL, f.vacancy_rate_residential),
-      NamedParameter(RevenuesEntryRepository.FIELD_VR_COMMERCIAL, f.vacancy_rate_commercial),
-      NamedParameter(RevenuesEntryRepository.FIELD_VR_PARKING, f.vacancy_rate_parking),
-      NamedParameter(RevenuesEntryRepository.FIELD_VR_OTHERS, f.vacancy_rate_others)
-    )
-
-  def expensesParser: RowParser[Revenues] = {
-    for {
-      id <- int(RevenuesEntryRepository.FIELD_ID)
-      property_expenses_id <- int(RevenuesEntryRepository.FIELD_PROPERTY_EXPENSES_ID)
-      residential <- double(RevenuesEntryRepository.FIELD_RESIDENTIAL).?
-      commercial <- double(RevenuesEntryRepository.FIELD_COMMERCIAL).?
-      parking_garages <- double(RevenuesEntryRepository.FIELD_PARKING_GARAGE).?
-      others <- double(RevenuesEntryRepository.FIELD_OTHERS).?
-      vacancy_rate_residential <- double(RevenuesEntryRepository.FIELD_VR_RESIDENTIAL).?
-      vacancy_rate_commercial <- double(RevenuesEntryRepository.FIELD_VR_COMMERCIAL).?
-      vacancy_rate_parking <- double(RevenuesEntryRepository.FIELD_VR_PARKING).?
-      vacancy_rate_others <- double(RevenuesEntryRepository.FIELD_VR_OTHERS).?
-    } yield {
-      Revenues(
-        id = id,
-        property_expenses_id = property_expenses_id,
-        residential = residential,
-        commercial = commercial,
-        parking_garages = parking_garages,
-        others = others,
-        vacancy_rate_residential = vacancy_rate_residential,
-        vacancy_rate_commercial = vacancy_rate_commercial,
-        vacancy_rate_parking = vacancy_rate_parking,
-        vacancy_rate_others = vacancy_rate_others
-      )
-    }
-  }
-
-}
-
+//package com.bms.property
+//
+//import javax.inject.Inject
+//
+//import anorm.SqlParser.{double, int, str}
+//import anorm.{NamedParameter, RowParser, SQL}
+//import play.api.db.Database
+//import play.db.NamedDatabase
+//
+//import scala.concurrent.{ExecutionContext, Future, blocking}
+//
+//class RevenuesEntryRepositoryImpl @Inject() (
+//                                              @NamedDatabase("default") db: Database
+//                                            )(implicit ec: ExecutionContext) extends RevenuesEntryRepository {
+//
+//  override def save(revenues: Revenues): Future[Unit] = Future(blocking {
+//    db.withConnection { implicit c =>
+//      val sql =
+//        s"""INSERT INTO ${RevenuesEntryRepository.TABLE_NAME} (${RevenuesEntryRepository.ALL_FIELDS}) VALUES ({property_exp_id},{residential}
+//           ,{commercial},{parking_garage},{others},{vacancy_rate_residential},{vacancy_rate_commercial},{vacancy_rate_parking},{vacancy_rate_others})""".stripMargin
+//      println("TOTO")
+//      SQL(sql)
+//        .on(RevenuesEntryRepositoryImpl.generateOn(revenues): _*)
+//        .executeInsert()
+//    }
+//  })
+//
+//  override def getRevenueByPropertyExpenseID(id: Int): Option[Revenues] =  {
+//    db.withConnection { implicit c =>
+//      val sql =
+//        s"""|SELECT * FROM ${RevenuesEntryRepository.TABLE_NAME}
+//            |           WHERE ${RevenuesEntryRepository.FIELD_PROPERTY_EXPENSES_ID} = {${RevenuesEntryRepository.FIELD_PROPERTY_EXPENSES_ID}}
+//           """.stripMargin
+//      SQL(sql)
+//        .on(s"${RevenuesEntryRepository.FIELD_PROPERTY_EXPENSES_ID}" -> id)
+//        .as(RevenuesEntryRepositoryImpl.expensesParser.*)
+//        .headOption
+//    }
+//  }
+//}
+//
+//
+//object RevenuesEntryRepositoryImpl {
+//
+//  def generateOn(f: Revenues): Seq[NamedParameter] =
+//    Seq(
+//      NamedParameter(RevenuesEntryRepository.FIELD_PROPERTY_EXPENSES_ID, f.property_expenses_id),
+//      NamedParameter(RevenuesEntryRepository.FIELD_RESIDENTIAL, f.residential),
+//      NamedParameter(RevenuesEntryRepository.FIELD_COMMERCIAL, f.commercial),
+//      NamedParameter(RevenuesEntryRepository.FIELD_PARKING_GARAGE, f.parking_garages),
+//      NamedParameter(RevenuesEntryRepository.FIELD_OTHERS, f.others),
+//      NamedParameter(RevenuesEntryRepository.FIELD_VR_RESIDENTIAL, f.vacancy_rate_residential),
+//      NamedParameter(RevenuesEntryRepository.FIELD_VR_COMMERCIAL, f.vacancy_rate_commercial),
+//      NamedParameter(RevenuesEntryRepository.FIELD_VR_PARKING, f.vacancy_rate_parking),
+//      NamedParameter(RevenuesEntryRepository.FIELD_VR_OTHERS, f.vacancy_rate_others)
+//    )
+//
+//  def expensesParser: RowParser[Revenues] = {
+//    for {
+//      id <- int(RevenuesEntryRepository.FIELD_ID)
+//      property_expenses_id <- int(RevenuesEntryRepository.FIELD_PROPERTY_EXPENSES_ID)
+//      residential <- double(RevenuesEntryRepository.FIELD_RESIDENTIAL).?
+//      commercial <- double(RevenuesEntryRepository.FIELD_COMMERCIAL).?
+//      parking_garages <- double(RevenuesEntryRepository.FIELD_PARKING_GARAGE).?
+//      others <- double(RevenuesEntryRepository.FIELD_OTHERS).?
+//      vacancy_rate_residential <- double(RevenuesEntryRepository.FIELD_VR_RESIDENTIAL).?
+//      vacancy_rate_commercial <- double(RevenuesEntryRepository.FIELD_VR_COMMERCIAL).?
+//      vacancy_rate_parking <- double(RevenuesEntryRepository.FIELD_VR_PARKING).?
+//      vacancy_rate_others <- double(RevenuesEntryRepository.FIELD_VR_OTHERS).?
+//    } yield {
+//      Revenues(
+//        id = id,
+//        property_expenses_id = property_expenses_id,
+//        residential = residential,
+//        commercial = commercial,
+//        parking_garages = parking_garages,
+//        others = others,
+//        vacancy_rate_residential = vacancy_rate_residential,
+//        vacancy_rate_commercial = vacancy_rate_commercial,
+//        vacancy_rate_parking = vacancy_rate_parking,
+//        vacancy_rate_others = vacancy_rate_others
+//      )
+//    }
+//  }
+//
+//}
+//

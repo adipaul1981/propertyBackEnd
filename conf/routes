@@ -14,15 +14,15 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 
 #GET     /NewProspectProperty                controllers.ProspectPropertyController.newPropertyView
 POST    /NewProspectProperty                controllers.ProspectPropertyController.create()
-DELETE    /NewProspectProperty                  controllers.ProspectPropertyController.deleteProperty()
+#DELETE    /NewProspectProperty                  controllers.ProspectPropertyController.deleteProperty()
 
-GET     /Property/:mls                      controllers.ProspectPropertyController.getPropertyByMLS(mls: String)
+#GET     /Property/:mls                      controllers.ProspectPropertyController.getPropertyByMLS(mls: String)
 #POST     /Property/:mls                      controllers.ExpensesController.saveExpenses(mls: String)
 
-GET     /Property/Expenses/                   controllers.ExpensesController.getExpensesByPropertyID()
-POST     /Property/Expenses/                  controllers.ExpensesController.saveExpenses()
+#GET     /Property/Expenses/                   controllers.ExpensesController.getExpensesByPropertyID()
+#POST     /Property/Expenses/                  controllers.ExpensesController.saveExpenses()
 
-GET     /Property/Revenues/                   controllers.RevenuesController.getRevenuesByPropertyID()
-POST     /Property/Revenues/                  controllers.RevenuesController.saveRevenues()
+#GET     /Property/Revenues/                   controllers.RevenuesController.getRevenuesByPropertyID()
+#POST     /Property/Revenues/                  controllers.RevenuesController.saveRevenues()
 
-GET     /propertylist/prospect                controllers.ProspectPropertyController.getAll
+#GET     /propertylist/prospect                controllers.ProspectPropertyController.getAll

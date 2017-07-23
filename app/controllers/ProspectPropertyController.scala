@@ -32,7 +32,7 @@ class ProspectPropertyController @Inject()(
 
   def create: Action[JsValue] = Action.async(parse.tolerantJson) { implicit request =>
     println(request.body)
-
+    println("ttttttt")
     val entries = (request.body).asOpt[Property]
     println(entries.toString)
 
@@ -47,35 +47,35 @@ class ProspectPropertyController @Inject()(
     }
   }
 
-  def getPropertyByMLS(mls:String)= Action {
-
-    val property = propertyEntryRepo.get(mls)
-    val json = Json.toJson(property)
-    println("GET Property")
-//      Ok(views.html.main(property.getOrElse(null).mls_no)(views.html.property(property.getOrElse(null))))
-    Ok(json)
-  }
-
-
-  def getAll()= Action {
-
-    val propertyList = propertyEntryRepo.getList
+//  def getPropertyByMLS(mls:String)= Action {
+//
+//    val property = propertyEntryRepo.get(mls)
 //    val json = Json.toJson(property)
-    Ok(views.html.main("list")(views.html.propertyList(propertyList)))
-  }
+//    println("GET Property")
+////      Ok(views.html.main(property.getOrElse(null).mls_no)(views.html.property(property.getOrElse(null))))
+//    Ok(json)
+//  }
 
-  def deleteProperty = Action {implicit request =>   //.async(parse.tolerantJson)
-    val id = request.getQueryString("Id").getOrElse(null).toInt
-    val id2 =Try { (request.getQueryString("Id"))}.getOrElse(null)
-    if (id2 != null ) {
-      propertyEntryRepo.delete(id)
-      Future.successful(Created)
 
-    } else {
-      Future.successful(BadRequest)
-    }
-    Ok
-  }
+//  def getAll()= Action {
+//
+//    val propertyList = propertyEntryRepo.getList
+////    val json = Json.toJson(property)
+//    Ok(views.html.main("list")(views.html.propertyList(propertyList)))
+//  }
+
+//  def deleteProperty = Action {implicit request =>   //.async(parse.tolerantJson)
+//    val id = request.getQueryString("Id").getOrElse(null).toInt
+//    val id2 =Try { (request.getQueryString("Id"))}.getOrElse(null)
+//    if (id2 != null ) {
+//      propertyEntryRepo.delete(id)
+//      Future.successful(Created)
+//
+//    } else {
+//      Future.successful(BadRequest)
+//    }
+//    Ok
+//  }
 
 
   //----------------
