@@ -8,7 +8,7 @@ import com.bms.property.{Address, Expenses}
 import com.sun.jndi.cosnaming.IiopUrl.Address
 
 import scala.concurrent.{ExecutionContext, Future}
-import com.bms.property.ExpensesEntryRepositoryImpl
+//import com.bms.property.ExpensesEntryRepositoryImpl
 
 case class Property //@Inject()(
 //                               expensesEntryRepo:  ExpensesEntryRepository
@@ -20,7 +20,8 @@ case class Property //@Inject()(
   muneval:Double,
   no1half:Int,no2half:Int,no3half:Int,no4half:Int,no5half:Int,no6half:Int,
   address: Address,
-  expenses:List[Expenses]
+  expenses:List[Expenses]=Nil,
+  revenues:List[Revenues]=Nil
 )
 {
   override def toString = this.mls_no
@@ -50,7 +51,8 @@ object Property extends LinkGenerator[Property]{
   (JsPath \ "NoFiveAndHalf").read[Int] and
   (JsPath \ "NoSixAndHalf").read[Int] and
   (JsPath \ "Address").read[Address] and
-  (JsPath \ "Expenses").read[List[Expenses]]
+  (JsPath \ "Expenses").read[List[Expenses]] and
+  (JsPath \ "Expenses").read[List[Revenues]]
   )(Property.apply _)
 
   implicit val writesAddress: Writes[Address] = (
@@ -73,8 +75,8 @@ object Property extends LinkGenerator[Property]{
   (JsPath \ "NoFiveAndHalf").write[Int] and
   (JsPath \ "NoSixAndHalf").write[Int] and
   (JsPath \ "Address").write[Address] and
-  (JsPath \ "Expenses").write[List[Expenses]]
-
+  (JsPath \ "Expenses").write[List[Expenses]] and
+  (JsPath \ "Expenses").write[List[Revenues]]
   )(unlift(Property.unapply))
 
 

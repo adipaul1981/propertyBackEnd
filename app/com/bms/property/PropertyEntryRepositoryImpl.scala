@@ -14,19 +14,33 @@ class PropertyEntryRepositoryImpl @Inject() (
   @NamedDatabase("default") db: Database
 )(implicit ec: ExecutionContext) extends PropertyEntryRepository {
 
+
   override def save(property: Property): Future[Unit]= Future(blocking {
-    db.withConnection{implicit c =>
-      val sql =
+    db.withTransaction{implicit c =>
+      val sqlProperty =
         s"""INSERT INTO ${PropertyEntryRepository.TABLE_NAME} (${PropertyEntryRepository.ALL_FIELDS}) VALUES ({mls},{price},{muneval}
            ,{onehalf},{twohalf},{threehalf},{fourhalf},{fivehalf},{sixhalf},{street_no},{street},{city},{province},{country})""".stripMargin
-      println("TOTO")
-      println(sql)
-      SQL(sql)
+      SQL(sqlProperty)
         .on('mls -> property.mls_no,'price -> property.price, 'muneval -> property.muneval,
           'onehalf -> property.no1half,'twohalf -> property.no2half,'threehalf -> property.no3half,'fourhalf -> property.no4half,
           'fivehalf -> property.no5half,'sixhalf -> property.no6half,'street_no -> property.address.streetNum,'street -> property.address.street, 'city -> property.address.city,
           'province -> property.address.province, 'country -> property.address.country)
           .executeInsert()
+
+      if (property.expenses != Nil){
+        val sqlExpenses = BatchSql(
+          s"""INSERT INTO ${ExpensesEntryRepository.TABLE_NAME} (${ExpensesEntryRepository.ALL_FIELDS})
+             |VALUES ({propId},{expenseType},{value})""",PropertyEntryRepositoryImpl.batchExpenses(property.id,property.expenses)).execute()
+//        SQL(sqlExpenses)
+//          .on('propId -> property.id,'expenseType -> property.expenses, 'value -> property.muneval)
+//          .executeInsert()
+    }
+      if (property.revenues != Nil){
+        val sqlRevenues = s"""INSERT INTO ${RevenuesEntryRepository.TABLE_NAME} (${RevenuesEntryRepository.ALL_FIELDS}) VALUES ({propId},{revenueType},{value},{vacancyRate})"""
+        SQL(sqlRevenues)
+          .on('propId -> property.id,'revenueType -> property.price, 'value -> property.muneval, 'vacancyRate -> property.no1half)
+          .executeInsert()
+      }
     }
   })
   override def delete(id: Int): Future[Unit]= Future(blocking {
@@ -115,6 +129,16 @@ object PropertyEntryRepositoryImpl{
     )}
 
   }
+  def batchExpenses(id:Int,expList:List[Expenses]):Seq[Seq[NamedParameter]] =
+    expList.map(e =>
+    Seq(
+      NamedParameter(ExpensesEntryRepository.FIELD_PROPERTY_ID,id),
+      NamedParameter(ExpensesEntryRepository.FIELD_EXPENSE_TYPE,e.expenseType),
+      NamedParameter(ExpensesEntryRepository.FIELD_VALUE,e.value)
+    ))
+
+
+
 
 
 }
