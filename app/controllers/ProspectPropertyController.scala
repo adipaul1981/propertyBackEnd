@@ -31,10 +31,7 @@ class ProspectPropertyController @Inject()(
 
 
   def create: Action[JsValue] = Action.async(parse.tolerantJson) { implicit request =>
-    println(request.body)
-    println("ttttttt")
     val entries = (request.body).asOpt[Property]
-    println(entries.toString)
 
     val test = entries map(_.asInstanceOf[Property]) getOrElse(null)  //TODO
     if (entries.nonEmpty) {
