@@ -4,8 +4,8 @@ import javax.inject.Inject
 
 import anorm.SqlParser.double
 import anorm._
-import play.api.db.Database
-import play.db.NamedDatabase
+import play.api.db.{ Database, NamedDatabase }
+//import play.db.NamedDatabase
 
 import scala.concurrent.{ExecutionContext, Future, blocking}
 
@@ -14,61 +14,35 @@ class PropertyEntryRepositoryImpl @Inject() (
   @NamedDatabase("default") db: Database
 )(implicit ec: ExecutionContext) extends PropertyEntryRepository {
 
-
   override def save(property: Property): Future[Unit]= Future(blocking {
-    db.withConnection{implicit c =>
-      println(property.revenues.toString)
+    db.withConnection{implicit c => {
       val sqlProperty =
         s"""INSERT INTO ${PropertyEntryRepository.TABLE_NAME} (${PropertyEntryRepository.ALL_FIELDS}) VALUES ({mls},{price},{muneval}
            ,{onehalf},{twohalf},{threehalf},{fourhalf},{fivehalf},{sixhalf},{street_no},{street},{city},{province},{country})""".stripMargin
       SQL(sqlProperty)
-        .on('mls -> property.mls_no,'price -> property.price, 'muneval -> property.muneval,
-          'onehalf -> property.no1half,'twohalf -> property.no2half,'threehalf -> property.no3half,'fourhalf -> property.no4half,
-          'fivehalf -> property.no5half,'sixhalf -> property.no6half,'street_no -> property.address.streetNum,'street -> property.address.street, 'city -> property.address.city,
-      'province -> property.address.province, 'country -> property.address.country)
+        .on('mls -> property.mls_no, 'price -> property.price, 'muneval -> property.muneval,
+          'onehalf -> property.no1half, 'twohalf -> property.no2half, 'threehalf -> property.no3half, 'fourhalf -> property.no4half,
+          'fivehalf -> property.no5half, 'sixhalf -> property.no6half, 'street_no -> property.address.streetNum, 'street -> property.address.street, 'city -> property.address.city,
+          'province -> property.address.province, 'country -> property.address.country)
         .executeInsert()
 
-      if (property.expenses != None){
-        val values: Seq[Expenses] = property.expenses.get
-        val indexedValues = values.zipWithIndex
-        val rows = indexedValues.map{ case (value, i) =>
-          s"({propId_${i}}, {expenseType_${i}}, {value_${i}})"
-        }.mkString(",")
+      val sqlRevenues =
+        s"""INSERT INTO ${RevenuesEntryRepository.TABLE_NAME} (${RevenuesEntryRepository.ALL_FIELDS})
+      VALUES """ + PropertyEntryRepositoryImpl.parameterRowsRevenues(property)._1
 
-        val parameters = indexedValues.flatMap{ case(_value, i) =>
-          Seq[NamedParameter](s"propId_${i}" -> property.id,s"expenseType_${i}" -> _value.expenseType, s"value_${i}" -> _value.value)
-        }
+      SQL(sqlRevenues)
+        .on(PropertyEntryRepositoryImpl.parameterRowsRevenues(property)._2: _ *)
+        .executeInsert()
 
-        val sqlExpenses =
-        s"""INSERT INTO ${ExpensesEntryRepository.TABLE_NAME} (${ExpensesEntryRepository.ALL_FIELDS})
-             VALUES """ + rows
-        SQL(sqlExpenses)
-          .on(parameters: _ *)
-          .executeInsert()
-      }
-      if (true){
-
-        val values: Seq[Revenues] = property.revenues.get
-        val indexedValues = values.zipWithIndex
-        val rows = indexedValues.map{ case (value, i) =>
-          s"({propId_${i}}, {revenueType_${i}}, {value_${i}}, {vacancyRate_${i}})"
-        }.mkString(",")
-
-        val parameters = indexedValues.flatMap{ case(_value, i) =>
-          Seq[NamedParameter](s"propId_${i}" -> property.id,s"revenueType_${i}" -> _value.revenueType, s"value_${i}" -> _value.value, s"vacancyRate_${i}" -> _value.vacancyrRate)
-        }
-
-        val sqlRevenues =
-          s"""INSERT INTO ${RevenuesEntryRepository.TABLE_NAME} (${RevenuesEntryRepository.ALL_FIELDS})
-        VALUES """ + rows
-        println(sqlRevenues)
-        println(parameters)
-        SQL(sqlRevenues)
-          .on(parameters: _ *)
-          .executeInsert()
-      }
-    }
+      val sqlExpenses =
+      s"""INSERT INTO ${ExpensesEntryRepository.TABLE_NAME} (${ExpensesEntryRepository.ALL_FIELDS})
+      VALUES """ + PropertyEntryRepositoryImpl.parameterRowsExpenses(property)._1
+      SQL(sqlExpenses)
+        .on(PropertyEntryRepositoryImpl.parameterRowsExpenses(property)._2: _ *)
+        .executeInsert()
+    }}
   })
+
 //  override def delete(id: Int): Future[Unit]= Future(blocking {
 //    db.withConnection{implicit c =>
 //      val sql =
@@ -160,6 +134,35 @@ object PropertyEntryRepositoryImpl{
 //    expList.map(e =>
 //      Seq[NamedParameter]("propId" -> id,"expenseType" -> e.expenseType, "value" -> e.value)
 //    )
+
+  def parameterRowsExpenses(property:Property): (String,Seq[NamedParameter]) = {
+    val values: Seq[Expenses] = property.expenses.get
+    val indexedValues = values.zipWithIndex
+
+    val rows = indexedValues.map{ case (value, i) =>
+      s"({propId_${i}}, {expenseType_${i}}, {value_${i}})"
+    }.mkString(",")
+
+    val parameters = indexedValues.flatMap{ case(_value, i) =>
+      Seq[NamedParameter](s"propId_${i}" -> property.id,s"expenseType_${i}" -> _value.expenseType, s"value_${i}" -> _value.value)
+    }
+    (rows,parameters)
+
+  }
+
+  def parameterRowsRevenues(property:Property): (String,Seq[NamedParameter]) = {
+          val values: Seq[Revenues] = property.revenues.get
+          val indexedValues2 = values.zipWithIndex
+          val rows = indexedValues2.map{ case (value, i) =>
+            s"({propId_${i}}, {revenueType_${i}}, {value_${i}}, {vacancyRate_${i}})"
+          }.mkString(",")
+
+          val parameters = indexedValues2.flatMap{ case(_value, i) =>
+            Seq[NamedParameter](s"propId_${i}" -> property.id,s"revenueType_${i}" -> _value.revenueType, s"value_${i}" -> _value.value, s"vacancyRate_${i}" -> _value.vacancyrRate)
+          }
+    (rows,parameters)
+
+  }
 
 
 
