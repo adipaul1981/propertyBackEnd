@@ -7,7 +7,7 @@ import play.api.libs.json.{JsPath, Reads, Writes}
 case class Revenues (
                       revenueType: String,
                       value: Option[Double],
-                      vacancyrRate: Option[Double]
+                      vacancyRate: Option[Double]
                     )
 
 object Revenues{}

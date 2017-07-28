@@ -33,10 +33,18 @@ class ProspectPropertyController @Inject()(
   def create: Action[JsValue] = Action.async(parse.tolerantJson) { implicit request =>
     val entries = (request.body).asOpt[Property]
 
-    val test = entries map(_.asInstanceOf[Property]) getOrElse(null)  //TODO
+    val property = entries map(_.asInstanceOf[Property]) getOrElse(null)  //TODO
     if (entries.nonEmpty) {
-      propertyEntryRepo.save(test)
-      val json = Json.toJson(test)
+      propertyEntryRepo.saveProperty(property)
+      property.expenses match {
+        case Some(expenses) => propertyEntryRepo.saveExpenses(expenses,property.id)
+        case None => println("No Expenses")
+      }
+      property.revenues match {
+        case Some(revenues) => propertyEntryRepo.saveRevenues(revenues,property.id)
+        case None => println("No Revenues")
+      }
+      val json = Json.toJson(property)
       Future.successful(Created(json))
 
     } else {
@@ -44,14 +52,13 @@ class ProspectPropertyController @Inject()(
     }
   }
 
-//  def getPropertyByMLS(mls:String)= Action {
-//
-//    val property = propertyEntryRepo.get(mls)
-//    val json = Json.toJson(property)
-//    println("GET Property")
-////      Ok(views.html.main(property.getOrElse(null).mls_no)(views.html.property(property.getOrElse(null))))
-//    Ok(json)
-//  }
+  def getPropertyByMLS(mls:String)= Action {
+
+    val property = propertyEntryRepo.get(mls)
+    val json = Json.toJson(property)
+    println("GET Property")
+    Ok(json)
+  }
 
 
 //  def getAll()= Action {

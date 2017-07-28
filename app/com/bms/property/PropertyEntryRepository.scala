@@ -38,9 +38,11 @@ object PropertyEntryRepository {
 }
 
 trait PropertyEntryRepository{
-  def save(property: Property): Future[Unit]
+  def saveProperty(property: Property): Future[Unit]
+  def saveExpenses(expenses: Seq[Expenses],id:Int): Future[Unit]
+  def saveRevenues(revenues: Seq[Revenues],id:Int): Future[Unit]
 //  def delete(id: Int) :Future[Unit]
-//  def get(mls: String): Option[Property]
+  def get(mls: String): Option[Property]
 //  def getList: List[Property]
 
 }

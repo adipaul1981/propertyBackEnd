@@ -16,7 +16,7 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 POST    /NewProspectProperty                controllers.ProspectPropertyController.create()
 #DELETE    /NewProspectProperty                  controllers.ProspectPropertyController.deleteProperty()
 
-#GET     /Property/:mls                      controllers.ProspectPropertyController.getPropertyByMLS(mls: String)
+GET     /Property/:mls                      controllers.ProspectPropertyController.getPropertyByMLS(mls: String)
 #POST     /Property/:mls                      controllers.ExpensesController.saveExpenses(mls: String)
 
 #GET     /Property/Expenses/                   controllers.ExpensesController.getExpensesByPropertyID()
