@@ -13,7 +13,7 @@ object ExpensesEntryRepository {
   val FIELD_ID="id"
   val FIELD_PROPERTY_ID="propId"
   val FIELD_EXPENSE_TYPE="expenseType"
-  val FIELD_VALUE="value"
+  val FIELD_VALUE="valueExpense"
 
   val ALL_FIELDS:String =
     s"$FIELD_PROPERTY_ID,$FIELD_EXPENSE_TYPE, $FIELD_VALUE"

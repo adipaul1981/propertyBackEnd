@@ -36,14 +36,16 @@ class ProspectPropertyController @Inject()(
     val property = entries map(_.asInstanceOf[Property]) getOrElse(null)  //TODO
     if (entries.nonEmpty) {
       propertyEntryRepo.saveProperty(property)
-      property.expenses match {
-        case Some(expenses) => propertyEntryRepo.saveExpenses(expenses,property.id)
-        case None => println("No Expenses")
-      }
-      property.revenues match {
-        case Some(revenues) => propertyEntryRepo.saveRevenues(revenues,property.id)
-        case None => println("No Revenues")
-      }
+//      property.expenses match {
+//        case Some(expenses) => propertyEntryRepo.saveExpenses(expenses,property.id)
+//        case None => println("No Expenses")
+//      }
+      propertyEntryRepo.saveExpenses(property.expenses,property.id)
+      propertyEntryRepo.saveRevenues(property.revenues,property.id)
+//      property.revenues match {
+//        case Some(revenues) => propertyEntryRepo.saveRevenues(revenues,property.id)
+//        case None => println("No Revenues")
+//      }
       val json = Json.toJson(property)
       Future.successful(Created(json))
 
@@ -57,6 +59,7 @@ class ProspectPropertyController @Inject()(
     val property = propertyEntryRepo.get(mls)
     val json = Json.toJson(property)
     println("GET Property")
+    println(json)
     Ok(json)
   }
 

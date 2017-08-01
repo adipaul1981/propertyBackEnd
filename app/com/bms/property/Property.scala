@@ -18,8 +18,8 @@ case class Property
   muneval:Double,
   no1half:Int,no2half:Int,no3half:Int,no4half:Int,no5half:Int,no6half:Int,
   address: Address,
-  expenses:Option[Seq[Expenses]],
-  revenues:Option[Seq[Revenues]]
+  expenses: Seq[Expenses],
+  revenues:Seq[Revenues]
 )
 {
   override def toString = this.mls_no
@@ -85,8 +85,8 @@ object Property{ //extends LinkGenerator[Property]{
       (JsPath \ "NoFiveAndHalf").read[Int] and
       (JsPath \ "NoSixAndHalf").read[Int] and
       (JsPath \ "Address").read[Address] and
-      (JsPath \ "Expenses").readNullable[Seq[Expenses]] and
-      (JsPath \ "Revenues").readNullable[Seq[Revenues]]
+      (JsPath \ "Expenses").read[Seq[Expenses]] and
+      (JsPath \ "Revenues").read[Seq[Revenues]]
     )(Property.apply _)
 
   implicit val writesProperty: Writes[Property] = (
@@ -101,8 +101,8 @@ object Property{ //extends LinkGenerator[Property]{
       (JsPath \ "NoFiveAndHalf").write[Int] and
       (JsPath \ "NoSixAndHalf").write[Int] and
       (JsPath \ "Address").write[Address] and
-      (JsPath \ "Expenses").writeNullable[Seq[Expenses]] and
-      (JsPath \ "Revenues").writeNullable[Seq[Revenues]]
+      (JsPath \ "Expenses").write[Seq[Expenses]] and
+      (JsPath \ "Revenues").write[Seq[Revenues]]
     )(unlift(Property.unapply))
 
 

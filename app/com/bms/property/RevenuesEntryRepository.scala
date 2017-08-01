@@ -13,7 +13,7 @@ object RevenuesEntryRepository {
   val FIELD_ID="id"
   val FIELD_PROPERTY_ID="propId"
   val FIELD_REVENUE_TYPE="revenueType"
-  val FIELD_VALUE="value"
+  val FIELD_VALUE="valueRevenue"
   val FIELD_VACANCY_RATE="vacancyRate"
 
   val ALL_FIELDS:String =

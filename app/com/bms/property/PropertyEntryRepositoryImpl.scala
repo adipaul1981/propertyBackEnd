@@ -86,13 +86,19 @@ class PropertyEntryRepositoryImpl @Inject() (
     db.withConnection{implicit c =>
       val sql =
         s"""|SELECT * FROM ${PropertyEntryRepository.TABLE_NAME}
+            |LEFT JOIN bms.expenses ON bms.expenses.propId = bms.potentialproperty.property_id
+            |LEFT JOIN bms.revenues ON bms.revenues.propId = bms.potentialproperty.property_id
             |           WHERE ${PropertyEntryRepository.FIELD_MLS} = {mls}
            """.stripMargin
-      println(sql)
-      SQL(sql)
+//      println(sql)
+//      println(PropertyEntryRepositoryImpl.propertyParser)
+      val l = SQL(sql)
         .on('mls -> str)
         .as(PropertyEntryRepositoryImpl.propertyParser.*)
-        .headOption
+      l.headOption map{h =>
+        h.copy(expenses = l.flatMap(_.expenses).distinct, revenues = l.flatMap(_.revenues).distinct)
+      }
+
     }
   }
 
@@ -139,8 +145,9 @@ object PropertyEntryRepositoryImpl{
       no5half = no5half,
       no6half = no6half,
       address = address,
-      expenses = Option(Seq(expenses)),
-      revenues = Option(Seq(revenues))
+      expenses = Seq(expenses),
+      revenues = Seq(revenues)
+
     )}
   }
 
