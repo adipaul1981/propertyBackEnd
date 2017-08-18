@@ -50,25 +50,25 @@ object Property{ //extends LinkGenerator[Property]{
   )(unlift(Address.unapply))
 
   implicit val readsExpenses: Reads[Expenses] = (
-    (JsPath \ "ExpensesType").read[String] and
+    (JsPath \ "ExpensesType").readNullable[String] and
       (JsPath \ "Value").readNullable[Double]
     )(Expenses.apply _)
 
 
   implicit val writesExpenses: Writes[Expenses] = (
-    (JsPath \ "ExpensesType").write[String] and
+    (JsPath \ "ExpensesType").writeNullable[String] and
       (JsPath \ "Value").writeNullable[Double]
     )(unlift(Expenses.unapply))
 
     implicit val readsRevenues: Reads[Revenues] = (
-      (JsPath \ "RevenuesType").read[String] and
+      (JsPath \ "RevenuesType").readNullable[String] and
         (JsPath \ "Value").readNullable[Double] and
         (JsPath \ "VacancyRate").readNullable[Double]
       )(Revenues.apply _)
 
 
     implicit val writesRevenues: Writes[Revenues] = (
-      (JsPath \ "RevenuesType").write[String] and
+      (JsPath \ "RevenuesType").writeNullable[String] and
         (JsPath \ "Value").writeNullable[Double] and
         (JsPath \ "VacancyRate").writeNullable[Double]
       )(unlift(Revenues.unapply))

@@ -5,7 +5,7 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Reads, Writes}
 
 case class Revenues (
-                      revenueType: String,
+                      revenueType: Option[String],
                       value: Option[Double],
                       vacancyRate: Option[Double]
                     )

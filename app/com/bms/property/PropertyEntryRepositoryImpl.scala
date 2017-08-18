@@ -151,7 +151,7 @@ object PropertyEntryRepositoryImpl{
 
   def expensesParser:RowParser[Expenses] = {
     for {
-      expenseType <- str(ExpensesEntryRepository.FIELD_EXPENSE_TYPE)
+      expenseType <- str(ExpensesEntryRepository.FIELD_EXPENSE_TYPE).?
       value <- double(ExpensesEntryRepository.FIELD_VALUE).?
     } yield {Expenses(
       expenseType = expenseType,
@@ -161,7 +161,7 @@ object PropertyEntryRepositoryImpl{
 
   def revenueParser:RowParser[Revenues] = {
     for {
-      revenueType <- str(RevenuesEntryRepository.FIELD_REVENUE_TYPE)
+      revenueType <- str(RevenuesEntryRepository.FIELD_REVENUE_TYPE).?
       value <- double(RevenuesEntryRepository.FIELD_VALUE).?
       vacancyRate <- double(RevenuesEntryRepository.FIELD_VACANCY_RATE).?
 
