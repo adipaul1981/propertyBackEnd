@@ -66,18 +66,38 @@ class PropertyEntryRepositoryImpl @Inject() (
   override def get(str: String): Option[Property] = {
 
     db.withConnection{implicit c =>
-      val sql =
-        s"""|SELECT * FROM ${PropertyEntryRepository.TABLE_NAME}
-            |LEFT JOIN bms.expenses ON bms.expenses.propId = bms.potentialproperty.property_id
-            |LEFT JOIN bms.revenues ON bms.revenues.propId = bms.potentialproperty.property_id
-            |           WHERE ${PropertyEntryRepository.FIELD_MLS} = {mls}
-           """.stripMargin
-      println(sql)
-      val l = SQL(sql)
+      val sqlProperty =
+      s"""SELECT * FROM ${PropertyEntryRepository.TABLE_NAME}
+            WHERE ${PropertyEntryRepository.FIELD_MLS} = {mls}
+           """
+      val prop = SQL(sqlProperty)
         .on('mls -> str)
         .as(PropertyEntryRepositoryImpl.propertyParser.*)
-      l.headOption map{h =>
-        h.copy(expenses = l.flatMap(_.expenses).distinct, revenues = l.flatMap(_.revenues).distinct)
+      println(prop.headOption.getOrElse(null).id)
+
+      val sqlExpenses =
+        s"""SELECT * FROM ${PropertyEntryRepository.TABLE_NAME_EXPENSES}
+            WHERE ${PropertyEntryRepository.FIELD_PROP_ID} = {id}
+           """
+      val exp = SQL(sqlExpenses)
+        .on('id -> prop.headOption.getOrElse(null).id)
+        .as(PropertyEntryRepositoryImpl.expensesParser.*)
+
+      val sqlRevenues =
+        s"""SELECT * FROM ${PropertyEntryRepository.TABLE_NAME_REVENUES}
+            WHERE ${PropertyEntryRepository.FIELD_PROP_ID} = {id}
+           """
+      val rev = SQL(sqlRevenues)
+        .on('id -> prop.headOption.getOrElse(null).id)
+        .as(PropertyEntryRepositoryImpl.revenueParser.*)
+
+      prop.headOption map{h =>
+        h.copy(expenses = exp, revenues = rev)
+
+
+
+//      prop.headOption map{h =>
+//        h.copy(expenses = prop.flatMap(_.expenses).distinct, revenues = prop.flatMap(_.revenues).distinct)
       }
 
     }
@@ -112,6 +132,8 @@ object PropertyEntryRepositoryImpl{
       no5half <- int(PropertyEntryRepository.FIELD_NO5_AND_HALF)
       no6half <- int(PropertyEntryRepository.FIELD_NO6_AND_HALF)
       address <- addressParser
+//      expenses <- expensesParser
+//      revenues <- revenueParser
       expenses <- expensesParser
       revenues <- revenueParser
     } yield {Property(
@@ -126,8 +148,8 @@ object PropertyEntryRepositoryImpl{
       no5half = no5half,
       no6half = no6half,
       address = address,
-      expenses = Seq(expenses),
-      revenues = Seq(revenues)
+      expenses = Nil,
+      revenues = Nil
 
     )}
   }

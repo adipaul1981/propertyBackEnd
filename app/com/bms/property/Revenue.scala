@@ -10,4 +10,18 @@ case class Revenues (
                       vacancyRate: Option[Double]
                     )
 
-object Revenues{}
+object Revenues{
+
+  implicit val readsRevenues: Reads[Revenues] = (
+    (JsPath \ "RevenuesType").readNullable[String] and
+      (JsPath \ "Value").readNullable[Double] and
+      (JsPath \ "VacancyRate").readNullable[Double]
+    )(Revenues.apply _)
+
+  implicit val writesRevenues: Writes[Revenues] = (
+    (JsPath \ "RevenuesType").writeNullable[String] and
+      (JsPath \ "Value").writeNullable[Double] and
+      (JsPath \ "VacancyRate").writeNullable[Double]
+    )(unlift(Revenues.unapply))
+
+}
