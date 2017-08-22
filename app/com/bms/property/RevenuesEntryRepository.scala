@@ -22,10 +22,10 @@ object RevenuesEntryRepository {
   val TABLE_NAME:String = "bms.revenues"
 }
 
-//trait RevenuesEntryRepository{
-//  def save(revenues: Revenues): Future[Unit]
-//
+trait RevenuesEntryRepository{
+  def save(revenues: Seq[Revenues], id:Int): Future[Unit]
+
 //  def getRevenueByPropertyExpenseID (id:Int): Option[Revenues]
-//
-//}
+
+}
 

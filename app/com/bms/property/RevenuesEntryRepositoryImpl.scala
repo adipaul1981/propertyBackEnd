@@ -1,30 +1,37 @@
-//package com.bms.property
-//
-//import javax.inject.Inject
-//
-//import anorm.SqlParser.{double, int, str}
-//import anorm.{NamedParameter, RowParser, SQL}
-//import play.api.db.Database
-//import play.db.NamedDatabase
-//
-//import scala.concurrent.{ExecutionContext, Future, blocking}
-//
-//class RevenuesEntryRepositoryImpl @Inject() (
-//                                              @NamedDatabase("default") db: Database
-//                                            )(implicit ec: ExecutionContext) extends RevenuesEntryRepository {
-//
-//  override def save(revenues: Revenues): Future[Unit] = Future(blocking {
-//    db.withConnection { implicit c =>
-//      val sql =
-//        s"""INSERT INTO ${RevenuesEntryRepository.TABLE_NAME} (${RevenuesEntryRepository.ALL_FIELDS}) VALUES ({property_exp_id},{residential}
-//           ,{commercial},{parking_garage},{others},{vacancy_rate_residential},{vacancy_rate_commercial},{vacancy_rate_parking},{vacancy_rate_others})""".stripMargin
-//      println("TOTO")
-//      SQL(sql)
-//        .on(RevenuesEntryRepositoryImpl.generateOn(revenues): _*)
-//        .executeInsert()
-//    }
-//  })
-//
+package com.bms.property
+
+import javax.inject.Inject
+
+import anorm.SqlParser.{double, int, str}
+import anorm.{NamedParameter, RowParser, SQL}
+import play.api.db.Database
+import play.db.NamedDatabase
+
+import scala.concurrent.{ExecutionContext, Future, blocking}
+
+class RevenuesEntryRepositoryImpl @Inject() (
+                                              @NamedDatabase("default") db: Database
+                                            )(implicit ec: ExecutionContext) extends RevenuesEntryRepository {
+
+  override def save(revenues: Seq[Revenues], id:Int): Future[Unit] = Future(blocking {
+    db.withConnection { implicit c =>
+      val sql =
+        s"""INSERT INTO ${RevenuesEntryRepository.TABLE_NAME} (${RevenuesEntryRepository.ALL_FIELDS}) VALUES ({propId},{revenueType},{valueRevenue}
+           ,{vacancyRate})"""
+
+      println("TOTooooO")
+      println(sql)
+      println("TOTO")
+      SQL(sql)
+        .on(RevenuesEntryRepositoryImpl.generateOn(revenues, id): _*)
+        .executeInsert()
+    }
+  })
+
+//  UPDATE table_name
+//    SET column1 = value1, column2 = value2, ...
+//  WHERE condition;
+
 //  override def getRevenueByPropertyExpenseID(id: Int): Option[Revenues] =  {
 //    db.withConnection { implicit c =>
 //      val sql =
@@ -37,24 +44,21 @@
 //        .headOption
 //    }
 //  }
-//}
-//
-//
-//object RevenuesEntryRepositoryImpl {
-//
-//  def generateOn(f: Revenues): Seq[NamedParameter] =
-//    Seq(
-//      NamedParameter(RevenuesEntryRepository.FIELD_PROPERTY_EXPENSES_ID, f.property_expenses_id),
-//      NamedParameter(RevenuesEntryRepository.FIELD_RESIDENTIAL, f.residential),
-//      NamedParameter(RevenuesEntryRepository.FIELD_COMMERCIAL, f.commercial),
-//      NamedParameter(RevenuesEntryRepository.FIELD_PARKING_GARAGE, f.parking_garages),
-//      NamedParameter(RevenuesEntryRepository.FIELD_OTHERS, f.others),
-//      NamedParameter(RevenuesEntryRepository.FIELD_VR_RESIDENTIAL, f.vacancy_rate_residential),
-//      NamedParameter(RevenuesEntryRepository.FIELD_VR_COMMERCIAL, f.vacancy_rate_commercial),
-//      NamedParameter(RevenuesEntryRepository.FIELD_VR_PARKING, f.vacancy_rate_parking),
-//      NamedParameter(RevenuesEntryRepository.FIELD_VR_OTHERS, f.vacancy_rate_others)
-//    )
-//
+}
+
+
+object RevenuesEntryRepositoryImpl {
+
+      def generateOn(f: Seq[Revenues], id:Int): Seq[NamedParameter] =
+        f.map{revenue =>
+          Seq(
+            NamedParameter(RevenuesEntryRepository.FIELD_PROPERTY_ID, id),
+            NamedParameter(RevenuesEntryRepository.FIELD_REVENUE_TYPE, revenue.revenueType),
+            NamedParameter(RevenuesEntryRepository.FIELD_VALUE, revenue.value),
+            NamedParameter(RevenuesEntryRepository.FIELD_VACANCY_RATE, revenue.vacancyRate)
+          )
+        }.flatten
+
 //  def expensesParser: RowParser[Revenues] = {
 //    for {
 //      id <- int(RevenuesEntryRepository.FIELD_ID)
@@ -82,6 +86,6 @@
 //      )
 //    }
 //  }
-//
-//}
-//
+
+}
+

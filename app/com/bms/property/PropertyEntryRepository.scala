@@ -28,13 +28,17 @@ object PropertyEntryRepository {
   val FIELD_STREET="street"
   val FIELD_CITY="city"
   val FIELD_PROVINCE="province"
-  val  FIELD_COUNTRY="country"
+  val FIELD_COUNTRY="country"
+
+  val FIELD_PROP_ID="propId"
 
   val ALL_FIELDS:String =
     s"$FIELD_MLS,$FIELD_PRICE, $FIELD_MUNICIPAL_EVAL, $FIELD_NO1_AND_HALF, $FIELD_NO2_AND_HALF, $FIELD_NO3_AND_HALF," +
       s"$FIELD_NO4_AND_HALF, $FIELD_NO5_AND_HALF, $FIELD_NO6_AND_HALF, $FIELD_STREET_NO, $FIELD_STREET, $FIELD_CITY, $FIELD_PROVINCE, $FIELD_COUNTRY"
 
   val TABLE_NAME:String = "bms.potentialproperty"
+  val TABLE_NAME_EXPENSES:String = "bms.expenses"
+  val TABLE_NAME_REVENUES:String = "bms.revenues"
 }
 
 trait PropertyEntryRepository{

@@ -27,7 +27,7 @@ class Module extends AbstractModule {
     bind(classOf[Counter]).to(classOf[AtomicCounter])
     bind(classOf[com.bms.property.PropertyEntryRepository]).to(classOf[com.bms.property.PropertyEntryRepositoryImpl])
 //    bind(classOf[com.bms.property.ExpensesEntryRepository]).to(classOf[com.bms.property.ExpensesEntryRepositoryImpl])
-//    bind(classOf[com.bms.property.RevenuesEntryRepository]).to(classOf[com.bms.property.RevenuesEntryRepositoryImpl])
+    bind(classOf[com.bms.property.RevenuesEntryRepository]).to(classOf[com.bms.property.RevenuesEntryRepositoryImpl])
   }
 
 }
