@@ -19,9 +19,7 @@ class RevenuesEntryRepositoryImpl @Inject() (
         s"""INSERT INTO ${RevenuesEntryRepository.TABLE_NAME} (${RevenuesEntryRepository.ALL_FIELDS}) VALUES ${RevenuesEntryRepositoryImpl.values(revenues)}"""
 
       println("TOTooooO")
-      println(sql)
       println(RevenuesEntryRepositoryImpl.generateOn(revenues, id))
-      println(RevenuesEntryRepositoryImpl.values(revenues))
       println("TOTO")
       SQL(sql)
         .on(RevenuesEntryRepositoryImpl.generateOn(revenues, id): _*)
@@ -58,9 +56,10 @@ object RevenuesEntryRepositoryImpl {
             f.zipWithIndex.map({case(v,i) => NamedParameter(s"${RevenuesEntryRepository.FIELD_VACANCY_RATE}_${i}",v.vacancyRate.get)})
           ).flatten
 
+
       def values(f: Seq[Revenues]): String =
-        f.zipWithIndex.map({case(v,i) => s"(${RevenuesEntryRepository.FIELD_PROPERTY_ID}_${i},${RevenuesEntryRepository.FIELD_REVENUE_TYPE}_${i}" +
-          s",${RevenuesEntryRepository.FIELD_VALUE}_${i},${RevenuesEntryRepository.FIELD_VACANCY_RATE}_${i})"}).mkString(",")
+        f.zipWithIndex.map({case(v,i) => s"({${RevenuesEntryRepository.FIELD_PROPERTY_ID}_${i}},{${RevenuesEntryRepository.FIELD_REVENUE_TYPE}_${i}}" +
+          s",{${RevenuesEntryRepository.FIELD_VALUE}_${i}},{${RevenuesEntryRepository.FIELD_VACANCY_RATE}_${i}})"}).mkString(",")
 
 
 
