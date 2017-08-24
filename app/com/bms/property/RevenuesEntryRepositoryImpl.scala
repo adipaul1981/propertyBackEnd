@@ -20,6 +20,7 @@ class RevenuesEntryRepositoryImpl @Inject() (
 
       println("TOTooooO")
       println(RevenuesEntryRepositoryImpl.generateOn(revenues, id))
+      println(revenues.zipWithIndex.flatMap({case(v,i) => v.vacancyRate.map(x => NamedParameter(s"${RevenuesEntryRepository.FIELD_VACANCY_RATE}_${i}",x))}))
       println("TOTO")
       SQL(sql)
         .on(RevenuesEntryRepositoryImpl.generateOn(revenues, id): _*)
@@ -51,9 +52,9 @@ object RevenuesEntryRepositoryImpl {
       def generateOn(f: Seq[Revenues], id:Int): Seq[NamedParameter] =
           Seq(
             f.zipWithIndex.map({case(v,i) => NamedParameter(s"${RevenuesEntryRepository.FIELD_PROPERTY_ID}_${i}",id)}),
-            f.zipWithIndex.map({case(v,i) => NamedParameter(s"${RevenuesEntryRepository.FIELD_REVENUE_TYPE}_${i}",v.revenueType.get.toString)}),
-            f.zipWithIndex.map({case(v,i) => NamedParameter(s"${RevenuesEntryRepository.FIELD_VALUE}_${i}",v.value.get)}),
-            f.zipWithIndex.map({case(v,i) => NamedParameter(s"${RevenuesEntryRepository.FIELD_VACANCY_RATE}_${i}",v.vacancyRate.get)})
+            f.zipWithIndex.flatMap({case(v,i) => v.revenueType.map(x => NamedParameter(s"${RevenuesEntryRepository.FIELD_REVENUE_TYPE}_${i}",x))}),
+            f.zipWithIndex.flatMap({case(v,i) => v.value.map(x => NamedParameter(s"${RevenuesEntryRepository.FIELD_VALUE}_${i}",x))}),
+            f.zipWithIndex.flatMap({case(v,i) => v.vacancyRate.map(x => NamedParameter(s"${RevenuesEntryRepository.FIELD_VACANCY_RATE}_${i}",x))})
           ).flatten
 
 
