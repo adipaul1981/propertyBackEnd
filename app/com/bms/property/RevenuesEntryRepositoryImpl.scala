@@ -3,7 +3,7 @@ package com.bms.property
 import javax.inject.Inject
 
 import anorm.SqlParser.{double, int, str}
-import anorm.{NamedParameter, RowParser, SQL}
+import anorm.{BatchSql, NamedParameter, RowParser, SQL}
 import play.api.db.Database
 import play.db.NamedDatabase
 
@@ -15,16 +15,27 @@ class RevenuesEntryRepositoryImpl @Inject() (
 
   override def save(revenues: Seq[Revenues], id:Int): Future[Unit] = Future(blocking {
     db.withConnection { implicit c =>
-      val sql =
-        s"""INSERT INTO ${RevenuesEntryRepository.TABLE_NAME} (${RevenuesEntryRepository.ALL_FIELDS}) VALUES ${RevenuesEntryRepositoryImpl.values(revenues)}"""
+//      val sql =
+//        s"""INSERT INTO ${RevenuesEntryRepository.TABLE_NAME} (${RevenuesEntryRepository.ALL_FIELDS}) VALUES ${RevenuesEntryRepositoryImpl.values(revenues)}"""
+//
+//      SQL(sql)
+//        .on(RevenuesEntryRepositoryImpl.generateOn(revenues, id): _*)
+//        .executeInsert()
+      val allFields = s"${RevenuesEntryRepository.FIELD_PROPERTY_ID}, ${RevenuesEntryRepository.FIELD_REVENUE_TYPE},${RevenuesEntryRepository.FIELD_VALUE},${RevenuesEntryRepository.FIELD_VACANCY_RATE}"
+      val allValues = s"{${RevenuesEntryRepository.FIELD_PROPERTY_ID}},{${RevenuesEntryRepository.FIELD_REVENUE_TYPE}}," +
+        s"{${RevenuesEntryRepository.FIELD_VALUE}},{${RevenuesEntryRepository.FIELD_VACANCY_RATE}}"
+      println(allFields)
+      println(allValues)
+      val batch = BatchSql(
+        s"INSERT INTO ${RevenuesEntryRepository.TABLE_NAME}(${allFields}) VALUES(${allValues})",
+        revenues.map(r => Seq[NamedParameter](s"${RevenuesEntryRepository.FIELD_PROPERTY_ID}" -> id,
+          s"${RevenuesEntryRepository.FIELD_REVENUE_TYPE}" -> r.revenueType,
+          s"${RevenuesEntryRepository.FIELD_VALUE}" -> r.value,
+          s"${RevenuesEntryRepository.FIELD_VACANCY_RATE}" -> r.vacancyRate))
+      )
 
-      println("TOTooooO")
-      println(RevenuesEntryRepositoryImpl.generateOn(revenues, id))
-      println(revenues.zipWithIndex.flatMap({case(v,i) => v.vacancyRate.map(x => NamedParameter(s"${RevenuesEntryRepository.FIELD_VACANCY_RATE}_${i}",x))}))
-      println("TOTO")
-      SQL(sql)
-        .on(RevenuesEntryRepositoryImpl.generateOn(revenues, id): _*)
-        .executeInsert()
+      val res: Array[Int] = batch.execute() // array of update count
+
     }
   })
 
@@ -58,9 +69,19 @@ object RevenuesEntryRepositoryImpl {
           ).flatten
 
 
-      def values(f: Seq[Revenues]): String =
-        f.zipWithIndex.map({case(v,i) => s"({${RevenuesEntryRepository.FIELD_PROPERTY_ID}_${i}},{${RevenuesEntryRepository.FIELD_REVENUE_TYPE}_${i}}" +
-          s",{${RevenuesEntryRepository.FIELD_VALUE}_${i}},{${RevenuesEntryRepository.FIELD_VACANCY_RATE}_${i}})"}).mkString(",")
+
+
+      def values(f: Seq[Revenues]) =
+              f.zipWithIndex.map({case(v,i) => s"({${RevenuesEntryRepository.FIELD_PROPERTY_ID}_${i}},{${RevenuesEntryRepository.FIELD_REVENUE_TYPE}_${i}}" +
+                s",{${RevenuesEntryRepository.FIELD_VALUE}_${i}},{${RevenuesEntryRepository.FIELD_VACANCY_RATE}_${i}})"}).mkString(",")
+
+
+
+
+
+
+
+
 
 
 
